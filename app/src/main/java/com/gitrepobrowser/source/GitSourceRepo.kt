@@ -25,29 +25,29 @@ internal constructor(gitRemoteRepoSource: GitSourceRepoInterface, gitLocalRepoSo
         mGitRepoLocalDataSource = checkNotNull(gitLocalRepoSource)
     }
 
-    override fun loadUserGitRepo(callback: GitSourceRepoInterface.Callback) {
+    override fun loadUserGitRepo(pageId: Int, perPage : Int, callback: GitSourceRepoInterface.Callback) {
         checkNotNull(callback)
 
         // Respond immediately with cache if available and not dirty
-        if (mCachedGitRepos != null && !mCacheIsDirty) {
-            callback.onRepoLoaded(ArrayList(mCachedGitRepos!!.values))
-            return
-        }
+//        if (mCachedGitRepos != null && !mCacheIsDirty) {
+//            callback.onRepoLoaded(ArrayList(mCachedGitRepos!!.values))
+//            return
+//        }
 
-        if (mCacheIsDirty) {
+        if (true) {
             // If cache is dirty we need to fetch new data from remote.
-            getRepoFromRemoteDataSource(callback)
+            getRepoFromRemoteDataSource(pageId, perPage,callback)
 
         } else {
             // Query the local storage if available. If not, query the network.
-            mGitRepoLocalDataSource.loadUserGitRepo(object : GitSourceRepoInterface.Callback {
+            mGitRepoLocalDataSource.loadUserGitRepo(pageId, perPage, object : GitSourceRepoInterface.Callback {
                 override fun onRepoLoaded(tasks: List<DataGitRepo>) {
                     refreshCache(tasks)
                     callback.onRepoLoaded(ArrayList(mCachedGitRepos!!.values))
                 }
 
                 override fun onDataNotAvailable() {
-                    getRepoFromRemoteDataSource(callback)
+                    getRepoFromRemoteDataSource(1, 15, callback)
                 }
             })
         }
@@ -65,8 +65,8 @@ internal constructor(gitRemoteRepoSource: GitSourceRepoInterface, gitLocalRepoSo
         mCacheIsDirty = false
     }
 
-    private fun getRepoFromRemoteDataSource(callback: GitSourceRepoInterface.Callback) {
-        mGitRepoRemoteDataSource.loadUserGitRepo(object : GitSourceRepoInterface.Callback {
+    private fun getRepoFromRemoteDataSource(pageId :  Int, perPage: Int, callback: GitSourceRepoInterface.Callback) {
+        mGitRepoRemoteDataSource.loadUserGitRepo(pageId, perPage, object : GitSourceRepoInterface.Callback {
             override fun onRepoLoaded(gitRepos: List<DataGitRepo>) {
                 refreshCache(gitRepos)
                 refreshLocalDataSource(gitRepos)

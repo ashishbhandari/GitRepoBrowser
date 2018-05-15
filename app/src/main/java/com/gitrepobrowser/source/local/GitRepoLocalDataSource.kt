@@ -16,12 +16,10 @@ private constructor(context: Context) : GitSourceRepoInterface {
 //        mDbHelper = TasksDbHelper(context)
     }
 
-
-    override fun loadUserGitRepo(callback: GitSourceRepoInterface.Callback) {
+    override fun loadUserGitRepo(pageId: Int, perPage: Int, callback: GitSourceRepoInterface.Callback) {
         // realm query to load record
-
-
     }
+
 
     override fun saveUserGitRepo(dataGitRepo: DataGitRepo) {
         // realm query to save repo into db

@@ -7,4 +7,6 @@ interface BasePresenter {
 
     fun start()
 
+    fun loadNextPage()
+
 }
