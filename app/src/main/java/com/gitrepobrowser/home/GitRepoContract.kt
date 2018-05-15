@@ -14,9 +14,11 @@ interface GitRepoContract {
 
     interface View : BaseView<Presenter> {
 
-        fun loadGitRepo(tasks: List<DataGitRepo>)
+        fun loadGitRepo(dataGitRepos: List<DataGitRepo>)
 
         fun noDataAvailable()
+
+        fun dataRequestFailed()
 
     }
 

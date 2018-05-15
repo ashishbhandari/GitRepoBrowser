@@ -1,13 +1,15 @@
 package com.gitrepobrowser.home
 
 import android.util.Log
-import android.util.MutableInt
 import com.gitrepobrowser.source.GitSourceRepo
 import com.gitrepobrowser.source.GitSourceRepoInterface
 import com.gitrepobrowser.source.entities.DataGitRepo
 
 /**
  * @author ashish
+ *
+ * Listens to user actions from the UI, retrieves the data and updates the UI as required.
+ *
  */
 class HomePresenter(gitSourceRepository: GitSourceRepo, tasksView: GitRepoContract.View) : GitRepoContract.Presenter {
 
@@ -30,25 +32,32 @@ class HomePresenter(gitSourceRepository: GitSourceRepo, tasksView: GitRepoContra
     }
 
     override fun start() {
-        loadTasks(mLastPage)
+        loadUserGitRepos(mLastPage)
     }
 
     override fun loadNextPage() {
         mLastPage += 1
-        loadTasks(mLastPage)
+        loadUserGitRepos(mLastPage)
     }
 
-    private fun loadTasks(pageId : Int) {
+    private fun loadUserGitRepos(pageId : Int) {
         Log.e("HomePresenter", " ### pageId : "+pageId)
         mGitRepository.loadUserGitRepo(pageId,15,object : GitSourceRepoInterface.Callback {
-            override fun onRepoLoaded(tasks: List<DataGitRepo>) {
+            override fun onRepoLoaded(gitRepos: List<DataGitRepo>) {
                 Log.e("HomePresenter","Data loaded")
-                mGitRepoView.loadGitRepo(tasks)
+                mGitRepoView.loadGitRepo(gitRepos)
             }
 
             override fun onDataNotAvailable() {
                 Log.e("HomePresenter","Data not Available!")
                 mGitRepoView.noDataAvailable()
+            }
+
+            override fun onDataRequestFailed() {
+                if(mLastPage > 1) {
+                    mLastPage -= 1
+                }
+                mGitRepoView.dataRequestFailed()
             }
 
         })

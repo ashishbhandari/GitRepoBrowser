@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.gitrepobrowser.R
 import com.gitrepobrowser.source.entities.DataGitRepo
 import kotlinx.android.synthetic.main.home_frag.*
@@ -92,6 +93,11 @@ class HomeFragment : Fragment(), GitRepoContract.View {
         isLastPageReached = true
         (githubrepo_rv.adapter as GitRepoAdapter).removeLoadingProgress()
         (githubrepo_rv.adapter as GitRepoAdapter).notifyDataSetChanged()
+    }
+
+    override fun dataRequestFailed() {
+        Toast.makeText(activity,"Data Request has been failed!!",Toast.LENGTH_LONG).show()
+        mPresenter!!.loadNextPage()
     }
 
 

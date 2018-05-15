@@ -10,16 +10,20 @@ interface GitSourceRepoInterface {
 
     interface Callback {
 
-        fun onRepoLoaded(tasks: List<DataGitRepo>)
+        fun onRepoLoaded(gitRepos: List<DataGitRepo>)
 
         fun onDataNotAvailable()
+
+        fun onDataRequestFailed()
     }
 
     fun loadUserGitRepo(pageId: Int, perPage : Int, callback: Callback)
 
-    fun saveUserGitRepo(dataGitRepo: DataGitRepo)
+    fun saveUserGitRepo(pageId: Int, gitRepos: List<DataGitRepo>)
 
     fun deleteAllRepos()
+
+    fun refreshCache()
 
 
 }
