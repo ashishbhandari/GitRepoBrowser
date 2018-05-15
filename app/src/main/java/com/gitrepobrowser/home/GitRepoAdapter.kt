@@ -71,14 +71,14 @@ class GitRepoAdapter(private var dataGitRepos: ArrayList<DataGitRepo>) : Recycle
 
     fun addLoadingProgress() {
         isLoadingAdded = true
-        addGitRepoItem(DataGitRepo(0, "", "", 0))
+        addGitRepoItem(DataGitRepo(-1, "", "", 0))
     }
 
     fun removeLoadingProgress() {
         isLoadingAdded = false
         val position = dataGitRepos.size - 1
         val gitRepoItem = getGitRepoItem(position)
-        if (gitRepoItem != null) {
+        if (gitRepoItem != null && gitRepoItem.id == -1L) {
             dataGitRepos.remove(gitRepoItem)
         }
     }

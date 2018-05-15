@@ -48,6 +48,7 @@ class HomePresenter(gitSourceRepository: GitSourceRepo, tasksView: GitRepoContra
 
             override fun onDataNotAvailable() {
                 Log.e("HomePresenter","Data not Available!")
+                mGitRepoView.noDataAvailable()
             }
 
         })

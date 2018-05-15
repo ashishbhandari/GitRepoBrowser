@@ -16,6 +16,8 @@ interface GitRepoContract {
 
         fun loadGitRepo(tasks: List<DataGitRepo>)
 
+        fun noDataAvailable()
+
     }
 
     interface Presenter : BasePresenter {

@@ -9,10 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.gitrepobrowser.R
-import com.gitrepobrowser.R.id.githubrepo_rv
 import com.gitrepobrowser.source.entities.DataGitRepo
 import kotlinx.android.synthetic.main.home_frag.*
-import java.util.LinkedHashMap
 
 /**
  * @author ashish
@@ -24,6 +22,8 @@ class HomeFragment : Fragment(), GitRepoContract.View {
     private lateinit var linearLayoutManager: LinearLayoutManager
 
     private var mGitRepos: MutableList<DataGitRepo>? = null
+
+    private var isLastPageReached: Boolean = false
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,24 +39,23 @@ class HomeFragment : Fragment(), GitRepoContract.View {
         githubrepo_rv?.layoutManager = linearLayoutManager
 
 //        githubrepo_rv?.layoutManager = LinearLayoutManager(activity)
-        githubrepo_rv?.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+        githubrepo_rv?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 val totalItemCount = recyclerView!!.layoutManager.itemCount
-                if (totalItemCount == linearLayoutManager.findLastVisibleItemPosition() + 1) {
-                    Log.e("HomeFragment", " #### Inside last Item visible " )
+                if (totalItemCount == linearLayoutManager.findLastVisibleItemPosition() + 1 && !isLastPageReached) {
+                    Log.e("HomeFragment", " #### Inside last Item visible ")
                     mPresenter!!.loadNextPage()
-                }else{
-                    Log.e("HomeFragment", " #### scroll" )
+                } else {
+                    Log.e("HomeFragment", " #### scroll")
                 }
             }
         })
 
         return root
     }
-
 
 
     companion object {
@@ -72,10 +71,11 @@ class HomeFragment : Fragment(), GitRepoContract.View {
             mGitRepos?.addAll(gitRepos)
             githubrepo_rv.adapter = GitRepoAdapter(mGitRepos as ArrayList<DataGitRepo>)
             (githubrepo_rv.adapter as GitRepoAdapter).addLoadingProgress()
-        }else{
+        } else {
             (githubrepo_rv.adapter as GitRepoAdapter).removeLoadingProgress()
             mGitRepos?.addAll(mGitRepos?.size!!, gitRepos)
             (githubrepo_rv.adapter as GitRepoAdapter).notifyDataSetChanged()
+            (githubrepo_rv.adapter as GitRepoAdapter).addLoadingProgress()
         }
     }
 
@@ -86,6 +86,12 @@ class HomeFragment : Fragment(), GitRepoContract.View {
 
     override fun setPresenter(presenter: GitRepoContract.Presenter) {
         mPresenter = checkNotNull(presenter)
+    }
+
+    override fun noDataAvailable() {
+        isLastPageReached = true
+        (githubrepo_rv.adapter as GitRepoAdapter).removeLoadingProgress()
+        (githubrepo_rv.adapter as GitRepoAdapter).notifyDataSetChanged()
     }
 
 
