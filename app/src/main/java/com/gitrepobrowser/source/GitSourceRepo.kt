@@ -95,13 +95,6 @@ internal constructor(gitRemoteRepoSource: GitSourceRepoInterface, gitLocalRepoSo
         checkNotNull(gitRepos)
         mGitRepoRemoteDataSource.saveUserGitRepo(pageId, gitRepos)
         mGitRepoLocalDataSource.saveUserGitRepo(pageId, gitRepos)
-
-        // Do in memory cache update to keep the app UI up to date
-        if (mCachedGitRepos == null) {
-            mCachedGitRepos = LinkedHashMap()
-        }
-
-//        mCachedGitRepos!!.put(dataGitRepo.id.toString(), dataGitRepo)
     }
 
     override fun refreshCache() {

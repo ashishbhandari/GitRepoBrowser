@@ -31,12 +31,12 @@ class HomeFragment : Fragment(), GitRepoContract.View {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.home_frag, container, false)
-        val githubrepo_rv = root?.findViewById<RecyclerView>(R.id.githubrepo_rv)
+        val githubRepoRv = root?.findViewById<RecyclerView>(R.id.githubRepoRv)
 
         linearLayoutManager = LinearLayoutManager(activity)
-        githubrepo_rv?.layoutManager = linearLayoutManager
+        githubRepoRv?.layoutManager = linearLayoutManager
 
-        githubrepo_rv?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        githubRepoRv?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -68,13 +68,13 @@ class HomeFragment : Fragment(), GitRepoContract.View {
         if (mGitRepos == null) {
             mGitRepos = ArrayList()
             mGitRepos?.addAll(gitRepos)
-            githubrepo_rv.adapter = GitRepoAdapter(mGitRepos as ArrayList<DataGitRepo>)
-            (githubrepo_rv.adapter as GitRepoAdapter).addLoadingProgress()
+            githubRepoRv.adapter = GitRepoAdapter(mGitRepos as ArrayList<DataGitRepo>)
+            (githubRepoRv.adapter as GitRepoAdapter).addLoadingProgress()
         } else {
-            (githubrepo_rv.adapter as GitRepoAdapter).removeLoadingProgress()
+            (githubRepoRv.adapter as GitRepoAdapter).removeLoadingProgress()
             mGitRepos?.addAll(mGitRepos?.size!!, gitRepos)
-            (githubrepo_rv.adapter as GitRepoAdapter).notifyDataSetChanged()
-            (githubrepo_rv.adapter as GitRepoAdapter).addLoadingProgress()
+            (githubRepoRv.adapter as GitRepoAdapter).notifyDataSetChanged()
+            (githubRepoRv.adapter as GitRepoAdapter).addLoadingProgress()
         }
         isResponseLoaded = true
     }
@@ -90,9 +90,9 @@ class HomeFragment : Fragment(), GitRepoContract.View {
 
     override fun noDataAvailable() {
         isLastPageReached = true
-        if(githubrepo_rv.adapter != null) {
-            (githubrepo_rv.adapter as GitRepoAdapter).removeLoadingProgress()
-            (githubrepo_rv.adapter as GitRepoAdapter).notifyDataSetChanged()
+        if(githubRepoRv.adapter != null) {
+            (githubRepoRv.adapter as GitRepoAdapter).removeLoadingProgress()
+            (githubRepoRv.adapter as GitRepoAdapter).notifyDataSetChanged()
         }else{
             // No data available to populate!
         }
