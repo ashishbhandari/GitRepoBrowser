@@ -112,10 +112,10 @@ internal constructor(gitRemoteRepoSource: GitSourceRepoInterface, gitLocalRepoSo
 
         private var INSTANCE: GitSourceRepo? = null
 
-        fun getInstance(context: Context?, tasksRemoteDataSource: GitSourceRepoInterface?,
-                        tasksLocalDataSource: GitSourceRepoInterface?): GitSourceRepo {
+        fun getInstance(context: Context?, mGitRepoRemoteDataSource: GitSourceRepoInterface?,
+                        mGitRepoLocalDataSource: GitSourceRepoInterface?): GitSourceRepo {
             if (INSTANCE == null) {
-                INSTANCE = GitSourceRepo(tasksRemoteDataSource!!, tasksLocalDataSource!!)
+                INSTANCE = GitSourceRepo(mGitRepoRemoteDataSource!!, mGitRepoLocalDataSource!!)
             }
             return INSTANCE as GitSourceRepo
         }

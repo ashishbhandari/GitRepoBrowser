@@ -11,11 +11,11 @@ import com.gitrepobrowser.source.entities.DataGitRepo
  * Listens to user actions from the UI, retrieves the data and updates the UI as required.
  *
  */
-class HomePresenter(gitSourceRepository: GitSourceRepo, tasksView: GitRepoContract.View) : GitRepoContract.Presenter {
+class HomePresenter(gitSourceRepository: GitSourceRepo, gitRepoView: GitRepoContract.View) : GitRepoContract.Presenter {
 
     private val mGitRepository: GitSourceRepo = checkNotNull(gitSourceRepository)
 
-    private val mGitRepoView: GitRepoContract.View = checkNotNull(tasksView)
+    private val mGitRepoView: GitRepoContract.View = checkNotNull(gitRepoView)
 
     private var mLastPage : Int = 1
 
