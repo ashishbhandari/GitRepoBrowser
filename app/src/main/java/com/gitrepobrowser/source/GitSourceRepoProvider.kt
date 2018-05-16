@@ -10,6 +10,6 @@ import com.gitrepobrowser.source.remote.GitRepoRemoteDataSource
 object GitSourceRepoProvider {
 
     fun provideGitRepoRepository(context: Context): GitSourceRepo {
-        return GitSourceRepo(context, GitRepoRemoteDataSource.getInstance(context), GitRepoLocalDataSource.getInstance(context))
+        return GitSourceRepo(GitRepoRemoteDataSource.getInstance(context), GitRepoLocalDataSource.getInstance(context))
     }
 }

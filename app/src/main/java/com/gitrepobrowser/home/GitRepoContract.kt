@@ -20,6 +20,8 @@ interface GitRepoContract {
 
         fun dataRequestFailed()
 
+        fun notifyUser()
+
     }
 
     interface Presenter : BasePresenter {

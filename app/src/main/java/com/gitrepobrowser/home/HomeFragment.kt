@@ -26,11 +26,8 @@ class HomeFragment : Fragment(), GitRepoContract.View {
 
     private var isLastPageReached: Boolean = false
 
+    private var isResponseLoaded: Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.home_frag, container, false)
@@ -39,16 +36,17 @@ class HomeFragment : Fragment(), GitRepoContract.View {
         linearLayoutManager = LinearLayoutManager(activity)
         githubrepo_rv?.layoutManager = linearLayoutManager
 
-//        githubrepo_rv?.layoutManager = LinearLayoutManager(activity)
         githubrepo_rv?.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
 
                 val totalItemCount = recyclerView!!.layoutManager.itemCount
-                if (totalItemCount == linearLayoutManager.findLastVisibleItemPosition() + 1 && !isLastPageReached) {
+                if (totalItemCount == linearLayoutManager.findLastVisibleItemPosition() + 1 && !isLastPageReached && isResponseLoaded) {
                     Log.e("HomeFragment", " #### Inside last Item visible ")
+                    isResponseLoaded = false
                     mPresenter!!.loadNextPage()
+
                 } else {
                     Log.e("HomeFragment", " #### scroll")
                 }
@@ -68,7 +66,7 @@ class HomeFragment : Fragment(), GitRepoContract.View {
 
     override fun loadGitRepo(gitRepos: List<DataGitRepo>) {
         if (mGitRepos == null) {
-            mGitRepos = ArrayList<DataGitRepo>()
+            mGitRepos = ArrayList()
             mGitRepos?.addAll(gitRepos)
             githubrepo_rv.adapter = GitRepoAdapter(mGitRepos as ArrayList<DataGitRepo>)
             (githubrepo_rv.adapter as GitRepoAdapter).addLoadingProgress()
@@ -78,6 +76,7 @@ class HomeFragment : Fragment(), GitRepoContract.View {
             (githubrepo_rv.adapter as GitRepoAdapter).notifyDataSetChanged()
             (githubrepo_rv.adapter as GitRepoAdapter).addLoadingProgress()
         }
+        isResponseLoaded = true
     }
 
     override fun onResume() {
@@ -91,14 +90,25 @@ class HomeFragment : Fragment(), GitRepoContract.View {
 
     override fun noDataAvailable() {
         isLastPageReached = true
-        (githubrepo_rv.adapter as GitRepoAdapter).removeLoadingProgress()
-        (githubrepo_rv.adapter as GitRepoAdapter).notifyDataSetChanged()
+        if(githubrepo_rv.adapter != null) {
+            (githubrepo_rv.adapter as GitRepoAdapter).removeLoadingProgress()
+            (githubrepo_rv.adapter as GitRepoAdapter).notifyDataSetChanged()
+        }else{
+            // No data available to populate!
+        }
     }
 
     override fun dataRequestFailed() {
-        Toast.makeText(activity,"Data Request has been failed!!",Toast.LENGTH_LONG).show()
+
         mPresenter!!.loadNextPage()
     }
+
+    override fun notifyUser() {
+
+        Toast.makeText(activity,"Data Request has been failed!!",Toast.LENGTH_SHORT).show()
+
+    }
+
 
 
 }

@@ -22,10 +22,6 @@ class GitRepoAdapter(private var dataGitRepos: ArrayList<DataGitRepo>) : Recycle
 
     private var isLoadingAdded: Boolean = false
 
-    fun setGitRepos(dataGitRepos: ArrayList<DataGitRepo>) {
-        this.dataGitRepos = dataGitRepos
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder {
 
         val inflater = LayoutInflater.from(parent?.context)
@@ -42,10 +38,10 @@ class GitRepoAdapter(private var dataGitRepos: ArrayList<DataGitRepo>) : Recycle
 
     override fun getItemViewType(position: Int): Int {
 
-        if (position == dataGitRepos.size - 1 && isLoadingAdded) {
-            return VIEW_TYPE_LOADING
+        return if (position == dataGitRepos.size - 1 && isLoadingAdded) {
+            VIEW_TYPE_LOADING
         } else {
-            return VIEW_TYPE_ITEM
+            VIEW_TYPE_ITEM
         }
     }
 
@@ -56,7 +52,7 @@ class GitRepoAdapter(private var dataGitRepos: ArrayList<DataGitRepo>) : Recycle
         return 0
     }
 
-    fun addGitRepoItem(gitRepo: DataGitRepo) {
+    private fun addGitRepoItem(gitRepo: DataGitRepo) {
         dataGitRepos.add(gitRepo)
         notifyItemInserted(dataGitRepos.size - 1)
     }
@@ -83,7 +79,7 @@ class GitRepoAdapter(private var dataGitRepos: ArrayList<DataGitRepo>) : Recycle
         }
     }
 
-    fun getGitRepoItem(index: Int): DataGitRepo {
+    private fun getGitRepoItem(index: Int): DataGitRepo {
         return dataGitRepos[index]
     }
 
@@ -104,7 +100,7 @@ class GitRepoAdapter(private var dataGitRepos: ArrayList<DataGitRepo>) : Recycle
 
 
         override fun onClick(v: View?) {
-            val context = itemView.context
+            itemView.context
         }
 
         override fun bindViews(gitRepo: DataGitRepo) {

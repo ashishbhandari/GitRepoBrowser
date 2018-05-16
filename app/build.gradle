@@ -26,6 +26,8 @@ android {
             minifyEnabled false
             useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "CLIENT_ID", "\"2832130339cdbe409fa8\""
+            buildConfigField "String", "CLIENT_SECRET", "\"886b0fa78aa1518623ff78f4538418b845ef7287\""
         }
         release {
             minifyEnabled true
@@ -60,8 +62,12 @@ dependencies {
     implementation 'com.squareup.okhttp3:logging-interceptor:3.6.0'
     implementation "io.reactivex.rxjava2:rxandroid:2.0.1"
 
-
-    testImplementation 'junit:junit:4.12'
+    testImplementation "junit:junit:$rootProject.ext.junitVersion"
+    androidTestCompile "org.mockito:mockito-core:$rootProject.ext.mockitoVersion"
+    testCompile "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
+    testCompile "org.hamcrest:hamcrest-all:$rootProject.ext.hamcrestVersion"
+    androidTestCompile 'com.google.dexmaker:dexmaker:1.2'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }

@@ -15,6 +15,7 @@ interface GitSourceRepoInterface {
         fun onDataNotAvailable()
 
         fun onDataRequestFailed()
+
     }
 
     fun loadUserGitRepo(pageId: Int, perPage : Int, callback: Callback)

@@ -11,7 +11,4 @@ import io.realm.annotations.PrimaryKey
 open class GitRepo(
         @PrimaryKey var pageId: Int = 0,
         var dataGitRepos: RealmList<DataGitRepo> = RealmList()
-) : RealmObject() {
-
-
-}
+) : RealmObject()

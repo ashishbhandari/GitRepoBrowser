@@ -1,6 +1,8 @@
 package com.gitrepobrowser.source.remote
 
 import android.content.Context
+import android.os.Build
+import com.gitrepobrowser.BuildConfig
 import com.gitrepobrowser.source.GitSourceRepoInterface
 import com.gitrepobrowser.source.entities.DataGitRepo
 import com.gitrepobrowser.util.Utils
@@ -28,7 +30,7 @@ private constructor(private val context: Context) : GitSourceRepoInterface {
 
         if(Utils.isNetworkAvailable(context)) {
 
-            disposable = gitRepoApiService.loadGitRepos("2832130339cdbe409fa8", "886b0fa78aa1518623ff78f4538418b845ef7287", page, perPage).observeOn(AndroidSchedulers.mainThread())
+            disposable = gitRepoApiService.loadGitRepos(BuildConfig.CLIENT_ID, BuildConfig.CLIENT_SECRET, page, perPage).observeOn(AndroidSchedulers.mainThread())
                     .subscribeOn(Schedulers.io()).subscribe({ result ->
                         if (result.isNotEmpty()) {
                             callback.onRepoLoaded(result)
@@ -42,8 +44,6 @@ private constructor(private val context: Context) : GitSourceRepoInterface {
         }else{
             callback.onDataRequestFailed()
         }
-
-
     }
 
     override fun saveUserGitRepo(pageId: Int, gitRepos: List<DataGitRepo>) {

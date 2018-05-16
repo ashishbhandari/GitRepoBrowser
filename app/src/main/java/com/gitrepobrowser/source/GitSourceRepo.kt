@@ -2,67 +2,31 @@ package com.gitrepobrowser.source
 
 import android.content.Context
 import com.gitrepobrowser.source.entities.DataGitRepo
-import com.gitrepobrowser.util.Utils
 import java.util.*
 
 /**
  * @author ashish
  */
 class GitSourceRepo
-internal constructor(private val context: Context, gitRemoteRepoSource: GitSourceRepoInterface, gitLocalRepoSource: GitSourceRepoInterface) : GitSourceRepoInterface {
+internal constructor(gitRemoteRepoSource: GitSourceRepoInterface, gitLocalRepoSource: GitSourceRepoInterface) : GitSourceRepoInterface {
 
-    private val mGitRepoRemoteDataSource: GitSourceRepoInterface
+    private val mGitRepoRemoteDataSource: GitSourceRepoInterface = checkNotNull(gitRemoteRepoSource)
 
-    private val mGitRepoLocalDataSource: GitSourceRepoInterface
+    private val mGitRepoLocalDataSource: GitSourceRepoInterface = checkNotNull(gitLocalRepoSource)
 
 
     internal var mCachedGitRepos: MutableMap<Int, List<DataGitRepo>>? = null
 
 
-    internal var mCacheIsDirty = false
+    private var mCacheIsDirty = false
 
-
-    init {
-        mGitRepoRemoteDataSource = checkNotNull(gitRemoteRepoSource)
-        mGitRepoLocalDataSource = checkNotNull(gitLocalRepoSource)
-    }
 
     override fun loadUserGitRepo(pageId: Int, perPage: Int, callback: GitSourceRepoInterface.Callback) {
         checkNotNull(callback)
 
-        if (Utils.isNetworkAvailable(context)) {
-            // If cache is dirty we need to fetch new data from remote.
-            getRepoFromRemoteDataSource(pageId, perPage, callback)
+        getRepoFromRemoteDataSource(pageId, perPage, callback)
 
-        } else {
-            // Query the local storage if available. If not, query the network.
-            mGitRepoLocalDataSource.loadUserGitRepo(pageId, perPage, object : GitSourceRepoInterface.Callback {
-                override fun onRepoLoaded(gitRepos: List<DataGitRepo>) {
-                    refreshCache(pageId, gitRepos)
-                    callback.onRepoLoaded(ArrayList(mCachedGitRepos?.get(pageId)))
-                }
 
-                override fun onDataNotAvailable() {
-                    callback.onDataNotAvailable()
-                }
-
-                override fun onDataRequestFailed() {
-                    callback.onDataNotAvailable()
-                }
-            })
-        }
-
-    }
-
-    private fun refreshCache(pageId: Int, gitRepos: List<DataGitRepo>) {
-        if (mCachedGitRepos == null) {
-            mCachedGitRepos = LinkedHashMap<Int, List<DataGitRepo>>()
-        }
-//        mCachedGitRepos!!.clear()
-
-        mCachedGitRepos!!.put(pageId, gitRepos)
-
-        mCacheIsDirty = false
     }
 
     private fun getRepoFromRemoteDataSource(pageId: Int, perPage: Int, callback: GitSourceRepoInterface.Callback) {
@@ -79,8 +43,37 @@ internal constructor(private val context: Context, gitRemoteRepoSource: GitSourc
 
             override fun onDataRequestFailed() {
                 callback.onDataRequestFailed()
+                getRepoFromLocalDataSource(pageId, perPage, callback)
             }
         })
+    }
+
+    private fun getRepoFromLocalDataSource(pageId: Int, perPage: Int, callback: GitSourceRepoInterface.Callback){
+        mGitRepoLocalDataSource.loadUserGitRepo(pageId, perPage, object : GitSourceRepoInterface.Callback {
+
+            override fun onRepoLoaded(gitRepos: List<DataGitRepo>) {
+                refreshCache(pageId, gitRepos)
+                callback.onRepoLoaded(ArrayList(mCachedGitRepos?.get(pageId)))
+            }
+
+            override fun onDataNotAvailable() {
+                callback.onDataNotAvailable()
+            }
+
+            override fun onDataRequestFailed() {
+                callback.onDataNotAvailable()
+            }
+        })
+    }
+
+    private fun refreshCache(pageId: Int, gitRepos: List<DataGitRepo>) {
+        if (mCachedGitRepos == null) {
+            mCachedGitRepos = LinkedHashMap()
+        }
+
+        mCachedGitRepos!!.put(pageId, gitRepos)
+
+        mCacheIsDirty = false
     }
 
     private fun refreshLocalDataSource(pageId: Int, gitRepos: List<DataGitRepo>) {
@@ -93,7 +86,7 @@ internal constructor(private val context: Context, gitRemoteRepoSource: GitSourc
         mGitRepoLocalDataSource.deleteAllRepos()
 
         if (mCachedGitRepos == null) {
-            mCachedGitRepos = LinkedHashMap<Int, List<DataGitRepo>>()
+            mCachedGitRepos = LinkedHashMap()
         }
         mCachedGitRepos!!.clear()
     }
@@ -105,7 +98,7 @@ internal constructor(private val context: Context, gitRemoteRepoSource: GitSourc
 
         // Do in memory cache update to keep the app UI up to date
         if (mCachedGitRepos == null) {
-            mCachedGitRepos = LinkedHashMap<Int, List<DataGitRepo>>()
+            mCachedGitRepos = LinkedHashMap()
         }
 
 //        mCachedGitRepos!!.put(dataGitRepo.id.toString(), dataGitRepo)
@@ -113,6 +106,23 @@ internal constructor(private val context: Context, gitRemoteRepoSource: GitSourc
 
     override fun refreshCache() {
         mCacheIsDirty = true
+    }
+
+    companion object {
+
+        private var INSTANCE: GitSourceRepo? = null
+
+        fun getInstance(context: Context?, tasksRemoteDataSource: GitSourceRepoInterface?,
+                        tasksLocalDataSource: GitSourceRepoInterface?): GitSourceRepo {
+            if (INSTANCE == null) {
+                INSTANCE = GitSourceRepo(tasksRemoteDataSource!!, tasksLocalDataSource!!)
+            }
+            return INSTANCE as GitSourceRepo
+        }
+
+        fun destroyInstance() {
+            INSTANCE = null
+        }
     }
 
 }

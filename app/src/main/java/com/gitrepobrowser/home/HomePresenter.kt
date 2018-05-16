@@ -13,17 +13,14 @@ import com.gitrepobrowser.source.entities.DataGitRepo
  */
 class HomePresenter(gitSourceRepository: GitSourceRepo, tasksView: GitRepoContract.View) : GitRepoContract.Presenter {
 
-    private val mGitRepository: GitSourceRepo
+    private val mGitRepository: GitSourceRepo = checkNotNull(gitSourceRepository)
 
-    private val mGitRepoView: GitRepoContract.View
+    private val mGitRepoView: GitRepoContract.View = checkNotNull(tasksView)
 
     private var mLastPage : Int = 1
 
 
     init {
-        mGitRepository = checkNotNull(gitSourceRepository)
-        mGitRepoView = checkNotNull(tasksView)
-
         mGitRepoView.setPresenter(this)
     }
 
@@ -54,10 +51,7 @@ class HomePresenter(gitSourceRepository: GitSourceRepo, tasksView: GitRepoContra
             }
 
             override fun onDataRequestFailed() {
-                if(mLastPage > 1) {
-                    mLastPage -= 1
-                }
-                mGitRepoView.dataRequestFailed()
+                mGitRepoView.notifyUser()
             }
 
         })

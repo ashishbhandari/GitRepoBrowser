@@ -31,8 +31,13 @@ private constructor(context: Context) : GitSourceRepoInterface {
                 realm = Realm.getDefaultInstance()
                 val findAll = realm.where<GitRepo>().equalTo("pageId", pageId).findAll()
                 val copyFromRealm = realm.copyFromRealm(findAll)
-                emitter.onNext(copyFromRealm[0].dataGitRepos)
-                emitter.onComplete()
+                if(copyFromRealm.isNotEmpty()) {
+                    emitter.onNext(copyFromRealm[0].dataGitRepos)
+                    emitter.onComplete()
+                }else{
+                    emitter.onNext(RealmList())
+                    emitter.onComplete()
+                }
             } finally {
                 if (realm != null) {
                     realm.close()
@@ -47,7 +52,6 @@ private constructor(context: Context) : GitSourceRepoInterface {
             }
         }, { error ->
             error.printStackTrace()
-            callback.onDataNotAvailable()
         })
     }
 
@@ -66,7 +70,7 @@ private constructor(context: Context) : GitSourceRepoInterface {
 
                 val gitRepo = GitRepo(pageId, realmGitRepo)
 
-                realm!!.executeTransaction() { realm ->
+                realm!!.executeTransaction { realm ->
                     realm.insertOrUpdate(gitRepo)
                 }
                 emitter.onNext(true)
